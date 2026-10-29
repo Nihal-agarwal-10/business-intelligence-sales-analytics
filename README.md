@@ -1,128 +1,270 @@
 # Business Intelligence Sales Analytics Platform
 
-An end-to-end Business Intelligence project that transforms raw sales data into analytical insights using Python, PostgreSQL, SQL, and Power BI.
+A complete end-to-end Business Intelligence project that transforms raw sales data into a structured PostgreSQL data warehouse and interactive Power BI dashboards. The project demonstrates data generation, data cleaning, ETL processing, dimensional modeling, SQL analytics, and business performance reporting.
+
+> **Dataset note:** This project uses synthetic data generated for demonstration and portfolio purposes. It does not contain actual Eastman Chemical Company data or confidential business information.
 
 ## Project Overview
 
-This project demonstrates a complete BI workflow, from synthetic data generation and data cleaning to warehouse loading, SQL analysis, and interactive dashboard development.
+The platform helps analyze sales performance across products, customers, regions, categories, and sales channels. It converts raw datasets into clean analytical tables, loads them into PostgreSQL, and presents business metrics through Power BI reports.
 
-The dataset contains 50,000 orders, 2,000 customers, and 100 products, covering January 2024 to September 2026.
+### Key Features
 
-**Note:** The dataset is synthetic and is intended for portfolio and demonstration purposes. It does not represent real company sales.
+- Automated synthetic data generation.
+- Data cleaning and preparation using Python and Pandas.
+- ETL pipeline for loading cleaned datasets into PostgreSQL.
+- Star-schema data warehouse with fact and dimension tables.
+- SQL queries for sales, revenue, profit, and product performance analysis.
+- Interactive Power BI dashboards with KPIs, charts, tables, and slicers.
+- Data validation through SQL queries and reconciliation with dashboard metrics.
 
 ## Technology Stack
 
-- **Python:** Data generation, cleaning, and ETL
-- **Pandas:** Data manipulation and preprocessing
-- **PostgreSQL:** Relational database and analytical warehouse
-- **SQL:** Data transformations and business analysis
-- **Power BI:** Interactive dashboards and visual reporting
-- **DAX:** KPI calculations and analytical measures
-- **Git and GitHub:** Version control and project hosting
+| Technology | Purpose |
+|---|---|
+| Python | Data generation and ETL |
+| Pandas | Data cleaning and transformation |
+| PostgreSQL | Data warehouse and analytical queries |
+| SQL | Schema design, data validation, and analytics |
+| Power BI Desktop | Interactive dashboards and reporting |
+| Git and GitHub | Version control and project documentation |
+| VS Code | Development environment |
 
 ## Project Architecture
 
 ```text
-Synthetic Sales Data
-        |
-        v
-Python + Pandas
-Data Generation and Cleaning
-        |
-        v
-PostgreSQL Staging Tables
-        |
-        v
-Dimensional Data Warehouse
-        |
-        v
-SQL Analytics and DAX Measures
-        |
-        v
-Power BI Dashboards
+Synthetic Data Generation
+          |
+          v
+     Raw CSV Files
+          |
+          v
+ Data Cleaning with Python
+          |
+          v
+   Cleaned CSV Files
+          |
+          v
+ PostgreSQL Staging Tables
+          |
+          v
+  Star-Schema Data Warehouse
+          |
+          v
+   SQL Analytics and DAX
+          |
+          v
+   Power BI Dashboards
+          |
+          v
+ Business Insights and Reporting
 ```
+
+## Dataset Overview
+
+The project contains the following synthetic datasets:
+
+| Dataset | Records |
+|---|---:|
+| Customers | 2,000 |
+| Products | 100 |
+| Orders | 50,000 |
+| Returns | 1,954 |
+
+The raw customer data includes data-quality issues such as missing industry values, inconsistent region labels, and duplicate records. The cleaning pipeline prepares the data for analytical use.
+
+The generated dataset covers January 2024 through September 2026.
 
 ## Repository Structure
 
 ```text
 Business-Intelligence-Sales-Analytics/
+│
 ├── data/
 │   ├── raw/
 │   └── processed/
+│
+├── docs/
+│   └── Screenshots/
+│       ├── Screenshot-1.png
+│       ├── Screenshot-2.png
+│       └── ...
+│
 ├── etl/
 │   ├── generate_data.py
 │   ├── create_data_issues.py
 │   ├── clean_data.py
 │   └── load_data.py
+│
 ├── notebooks/
+│
 ├── powerbi/
-│   └── sales_analytics.pbix
+│   ├── sales_analytics.pbix
+│   └── BI_HACKATHON.pbix
+│
 ├── sql/
 │   ├── schema.sql
 │   └── analytics.sql
+│
+├── .env
 ├── .gitignore
-├── requirements.txt
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
-Generated CSV files and environment credentials are excluded from version control.
+**Note:** The `.env` file contains local configuration and should not be committed to GitHub. Raw and processed CSV files are excluded from version control; generate them locally by following the setup instructions.
 
-## Data Engineering and ETL
+## ETL Pipeline
 
-The ETL workflow includes:
+The pipeline is organized into four Python scripts.
 
-1. Generating synthetic customers, products, orders, and returns.
-2. Introducing data-quality issues for cleaning demonstrations.
-3. Cleaning datasets, including handling missing values, duplicate records, and inconsistent categorical values.
-4. Loading cleaned customer, product, and order data into PostgreSQL staging tables.
-5. Transforming staging data into dimensional tables and the sales fact table.
+### 1. Data Generation
 
-## Data Warehouse
+**File:** `etl/generate_data.py`
 
-The warehouse follows a star-schema design.
+Generates synthetic customers, products, orders, and returns for the analytics workflow.
 
-**Dimension tables**
-- `dim_customer`
-- `dim_product`
-- `dim_date`
-- `dim_sales_channel`
+### 2. Data Quality Issue Creation
 
-**Fact table**
-- `fact_sales`
+**File:** `etl/create_data_issues.py`
 
-The fact table stores order-level sales measures, including quantity, revenue, cost, and profit. Dimension tables provide customer, product, date, and sales-channel context for analysis.
+Introduces selected data-quality issues into the generated datasets to simulate common problems encountered in real-world data pipelines.
+
+### 3. Data Cleaning
+
+**File:** `etl/clean_data.py`
+
+Cleans the raw datasets by addressing issues such as duplicate customer records, missing values, inconsistent categories or regions, and invalid order records.
+
+The current cleaning run produced:
+
+- 2,000 customers
+- 100 products
+- 50,000 orders
+- 1,954 returns
+
+The cleaned datasets are saved under `data/processed/`.
+
+### 4. PostgreSQL Loading
+
+**File:** `etl/load_data.py`
+
+Loads the cleaned datasets into PostgreSQL staging tables for subsequent warehouse processing and analytics.
+
+The successful staging load reported:
+
+- 2,000 customers loaded
+- 100 products loaded
+- 50,000 orders loaded
+
+## Data Warehouse Design
+
+The project uses a star-schema model to support analytical queries and Power BI reporting.
+
+### Dimension Tables
+
+| Table | Purpose |
+|---|---|
+| `dim_customer` | Customer attributes |
+| `dim_product` | Product and category attributes |
+| `dim_date` | Date-related attributes |
+| `dim_sales_channel` | Sales channel attributes |
+
+### Fact Table
+
+| Table | Purpose |
+|---|---|
+| `fact_sales` | Sales transactions and associated measures |
+
+The `fact_sales` table connects to the four dimensions through foreign-key relationships:
+
+- `customer_key` → `dim_customer`
+- `product_key` → `dim_product`
+- `date_key` → `dim_date`
+- `channel_key` → `dim_sales_channel`
+
+This structure supports analysis across multiple business dimensions while keeping transaction-level measures in the fact table.
 
 ## Power BI Dashboards
 
+The Power BI report contains two analytical pages.
+
 ### 1. Executive Overview
 
-Provides a consolidated view of business performance through:
+Provides a high-level view of sales performance.
+
+**Key performance indicators:**
 - Total Revenue
 - Total Profit
 - Profit Margin
 - Total Orders
 - Total Customers
 - Average Order Value
+
+**Visualizations:**
 - Monthly Revenue Trend
 - Revenue by Region
 - Revenue by Product Category
 
-Includes slicers for year, region, and product category.
+**Filters:**
+- Year
+- Category
+- Region
+
+![Executive Overview Dashboard](docs/Screenshots/Screenshot-1.png)
 
 ### 2. Product Analytics
 
-Provides product-level analysis through:
+Focuses on product-level revenue and profitability.
+
+**Visualizations:**
 - Top 10 Products by Revenue
 - Revenue by Product Category
 - Top 10 Products by Profit
-- Product Details table with pricing, cost, revenue, and profit
-- Year and category slicers
+- Product-level detail table
 
-## Key Measures
+**Filters:**
+- Category
+- Year
 
-The report includes DAX measures for revenue, cost, profit, profit margin, order count, customer count, and average order value.
+The product table includes attributes such as product name, category, subcategory, unit price, unit cost, total revenue, and total profit.
 
-Example:
+![Product Analytics Dashboard](docs/Screenshots/Screenshot-2.png)
+
+## SQL Analytics
+
+**File:** `sql/analytics.sql`
+
+The SQL analysis supports business questions such as:
+
+- What is the total revenue and profit?
+- What is the overall profit margin?
+- Which regions generate the most revenue?
+- Which products contribute the most revenue?
+- How does revenue vary by product category?
+- How does revenue change over time?
+- How do sales channels compare?
+
+The queries can be extended with common table expressions, window functions, year-over-year growth, customer segmentation, and additional profitability analysis.
+
+## DAX Measures
+
+The Power BI report uses DAX measures to calculate business KPIs.
+
+```dax
+Total Revenue =
+SUM('public fact_sales'[revenue])
+```
+
+```dax
+Total Cost =
+SUM('public fact_sales'[cost])
+```
+
+```dax
+Total Profit =
+SUM('public fact_sales'[profit])
+```
 
 ```dax
 Profit Margin =
@@ -130,81 +272,150 @@ DIVIDE([Total Profit], [Total Revenue], 0)
 ```
 
 ```dax
+Total Orders =
+DISTINCTCOUNT('public fact_sales'[order_id])
+```
+
+```dax
 Average Order Value =
 DIVIDE([Total Revenue], [Total Orders], 0)
 ```
 
-## SQL Validation
+```dax
+Total Customers =
+DISTINCTCOUNT('public dim_customer'[customer_id])
+```
 
-The warehouse was validated against aggregate SQL results.
+These measures power the KPI cards and respond to report filters.
 
-| Metric | Validated result |
+## Data Validation
+
+The PostgreSQL validation query returned the following results for the synthetic sales dataset:
+
+| Metric | Result |
 |---|---:|
-| Fact table rows | 50,000 |
-| Distinct order IDs | 50,000 |
+| Total sales rows | 50,000 |
+| Distinct orders | 50,000 |
 | Total Revenue | 8,861,619,904.35 |
 | Total Profit | 2,423,578,378.12 |
 | Profit Margin | 27.35% |
 
-These values are derived from the synthetic dataset and are not real business results.
+The database checks also confirmed the presence of the five expected warehouse tables and the four foreign-key relationships connecting `fact_sales` to its dimensions.
 
-## Running the Project
+These values describe the generated project dataset. They are not actual company financial results.
+
+## Getting Started
 
 ### Prerequisites
 
-- Python
-- PostgreSQL
-- Power BI Desktop
-- Git
+Install the following software:
 
-### Setup
+- Python 3.12 or another compatible Python version.
+- PostgreSQL.
+- A PostgreSQL client such as pgAdmin 4.
+- Power BI Desktop.
+- Git (optional, for cloning the repository).
 
-1. Clone the repository.
-2. Create and activate a Python virtual environment.
-3. Install dependencies from `requirements.txt`.
-4. Configure a local `.env` file with the PostgreSQL connection settings expected by the ETL script.
-5. Create the database and run the SQL schema script.
-6. Generate and clean the datasets.
-7. Load the cleaned data into PostgreSQL.
-8. Run the analytical SQL queries.
-9. Open `powerbi/sales_analytics.pbix` in Power BI Desktop and configure the data connection for your environment.
-
-Run the ETL scripts from the project root in the appropriate order:
+### 1. Clone the Repository
 
 ```bash
+git clone https://github.com/Nihal-agarwal-10/business-intelligence-sales-analytics.git
+cd business-intelligence-sales-analytics
+```
+
+Alternatively, download the repository as a ZIP file and extract it.
+
+### 2. Create a Virtual Environment
+
+Windows PowerShell:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+If Python 3.12 is not installed, use a compatible Python version available on your system.
+
+### 3. Install Dependencies
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 4. Generate the Data
+
+Run the scripts in the following order:
+
+```powershell
 python etl/generate_data.py
 python etl/create_data_issues.py
 python etl/clean_data.py
+```
+
+This generates the local CSV files, introduces selected data-quality issues, and produces cleaned datasets.
+
+### 5. Configure PostgreSQL
+
+1. Start your PostgreSQL server.
+2. Create a database named `sales_analytics`.
+3. Configure the database connection settings required by `etl/load_data.py` in your local environment.
+4. Keep database credentials out of source control.
+
+The exact connection variable names and configuration format must match those implemented in the Python loading script.
+
+### 6. Load the Data
+
+```powershell
 python etl/load_data.py
 ```
 
-Run the SQL scripts in `sql/` using your PostgreSQL client. Follow any connection and schema setup requirements in the scripts.
+Check the terminal output for confirmation that the staging data has loaded successfully.
 
-## Learning Outcomes
+### 7. Create and Populate the Warehouse
 
-This project demonstrates practical experience with:
-- Data cleaning and quality checks
-- Python-based ETL workflows
-- Relational database design
-- Dimensional modeling and star schemas
-- SQL aggregations and business analytics
-- DAX measures and interactive Power BI reporting
-- Git-based project version control
+Use `sql/schema.sql` to inspect and execute the warehouse schema setup. Ensure that the dimension and fact tables are created and populated according to the script's implementation.
+
+Run the relevant SQL validation and analytical queries in `sql/analytics.sql` using pgAdmin or another PostgreSQL client.
+
+### 8. Open the Power BI Report
+
+1. Open `powerbi/sales_analytics.pbix` in Power BI Desktop.
+2. Configure the PostgreSQL connection for your local environment if prompted.
+3. Refresh the data.
+4. Verify that the report visuals and slicers display the expected metrics.
+
+**Important:** The setup steps assume that the schema and loading scripts are consistent with the described staging-to-warehouse workflow. If your local scripts implement a different execution sequence, follow the actual SQL and Python code.
 
 ## Limitations
 
-- The data is synthetic rather than sourced from a real organization.
-- The project uses a local PostgreSQL environment; connection settings must be configured by each user.
-- Cloud ETL services such as Azure Data Factory and Azure Synapse are not implemented in this version.
+- The datasets are synthetic and do not represent a real company's operations.
+- Raw and processed data files are generated locally rather than stored in the repository.
+- Database credentials and local connection settings are not included.
+- The report depends on a correctly configured PostgreSQL database.
+- The current project focuses on descriptive analytics and BI reporting rather than predictive machine learning.
 
 ## Future Improvements
 
-- Add customer segmentation and retention analysis.
-- Automate ETL execution and data-quality testing.
-- Add additional dashboard pages and deeper trend analysis.
-- Extend the pipeline to a cloud data platform.
+Potential extensions include:
+
+- Add automated data-quality checks and pipeline logging.
+- Introduce incremental loading and duplicate-load protection.
+- Add year-over-year revenue and profit analysis.
+- Expand customer retention and repeat-purchase analysis.
+- Analyze returns and their impact on profitability.
+- Add automated testing for ETL transformations and SQL metrics.
+- Improve deployment and refresh automation.
+
+## Author
+
+**Nihal Agarwal**
+
+B.Tech — Computer Science and Business Systems
+
+GITAM University, Hyderabad
+
+GitHub: [Nihal-agarwal-10](https://github.com/Nihal-agarwal-10)
 
 ---
 
-**Author:** Nihal Agarwal  
-**Project:** Business Intelligence Sales Analytics Platform
+*Built as a portfolio project demonstrating practical skills in Python, SQL, PostgreSQL, ETL, dimensional modeling, and Power BI.*
